@@ -1,16 +1,30 @@
 #!/bin/bash
 
-WALCMD=".local/.pip-pkgs/bin/wal"
+function init () {
+	WALLDIR="$HOME/Pictures"
+	XRES="$HOME/.cache/wal/colors.Xresources"
+	WALPGM="$HOME/.local/pip-pkgs/bin/wal"
+}
 
-WALLDIR="$HOME/Pictures"
-XRES="$HOME/.cache/wal/colors.Xresources"
+function getwall () {
+	CHOICE="$(ls $WALLDIR | rofi -dmenu)"
+	if [ -z $CHOICE ]; then exit 1
+	elif [ -d "$WALLDIR/$CHOICE" ] 
+	then
+		WALLDIR="$WALLDIR/$CHOICE"
+		getwall
+	else
+		WALL="$WALLDIR/$CHOICE"
+	fi
+}
 
-WALL="$WALLDIR/$(ls $WALLDIR | rofi -dmenu)"
+function setwall () {
+	nitrogen --set-zoom-fill --save $WALL
+	$WALPGM -i $WALL
+	xrdb $XRES
+	echo 'awesome.restart()' | awesome-client
+}
 
-nitrogen --set-zoom-fill --save $WALL
-
-$WALCMD -i $WALL
-
-xrdb $XRES
-
-echo 'awesome.restart()' | awesome-client
+init
+getwall
+setwall
