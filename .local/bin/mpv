@@ -2,9 +2,13 @@
 
 # The purpose here is to override the default behavior of mpv
 
+ARG=$1
 VIDEODIR="$HOME/Videos"
 
-VIDEO="$VIDEODIR/$(ls $VIDEODIR | rofi -dmenu)"
-
-nohup /usr/bin/mpv --save-position-on-quit $VIDEO &
+if [[ $ARG ]]; then
+    /usr/bin/mpv $ARG
+else
+    VIDEO="$VIDEODIR/$(ls $VIDEODIR | rofi -dmenu)"
+    nohup /usr/bin/mpv --save-position-on-quit $VIDEO &
+fi
 
