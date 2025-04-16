@@ -1,28 +1,54 @@
 #!/bin/bash
 
 function init () {
-	WALLDIR="$HOME/Pictures"
-	XRES="$HOME/.cache/wal/colors.Xresources"
-	WALPGM="$HOME/.local/pip-pkgs/bin/wal"
+    WALLDIR="$HOME/Pictures"
+    XRES="$HOME/.cache/wal/colors.Xresources"
+    WALPGM="$HOME/.local/pip-pkgs/bin/wal"
+    WM=$XDG_SESSION_TYPE
 }
 
 function getwall () {
+    
+    if [[ $WM == "wayland" ]]; then
+	CHOICE="$(ls $WALLDIR | wofi --dmenu)"
+    elif [[ $WM == "x11" ]]; then
 	CHOICE="$(ls $WALLDIR | rofi -dmenu)"
-	if [ -z $CHOICE ]; then exit 1
-	elif [ -d "$WALLDIR/$CHOICE" ] 
-	then
-		WALLDIR="$WALLDIR/$CHOICE"
-		getwall
-	else
-		WALL="$WALLDIR/$CHOICE"
-	fi
+    fi
+    if [ -z $CHOICE ]; then exit 1
+    elif [ -d "$WALLDIR/$CHOICE" ] 
+    then
+    	WALLDIR="$WALLDIR/$CHOICE"
+    	getwall
+    else
+    	WALL="$WALLDIR/$CHOICE"
+    fi
 }
 
 function setwall () {
-	nitrogen --set-zoom-fill --save $WALL
-	$WALPGM -i $WALL
-	xrdb $XRES
-	echo 'awesome.restart()' | awesome-client
+    if [[ $WM == "wayland" ]]; then
+        hyprctl hyprpaper reload , $WALL
+        printf "preload = $WALL\nwallpaper = , $WALL" > $HOME/.config/hypr/hyprpaper.conf
+	regen_waybar
+    elif [[ $WM == "x11" ]]; then
+        nitrogen --set-zoom-fill --save $WALL
+        $WALPGM -i $WALL
+        xrdb $XRES
+        echo 'awesome.restart()' | awesome-client
+    fi
+}
+
+function regen_waybar () {
+    COLORWAYBAR="$HOME/.config/waybar/colors-waybar.css"
+    COLORWOFI="$HOME/.config/wofi/colors-wofi.css"
+    $WALPGM -i $WALL
+    cp $HOME/.cache/wal/colors-waybar.css $COLORWAYBAR
+    cp $HOME/.cache/wal/colors-waybar.css $COLORWOFI
+    ## the following commands would apply if we were dealing with regular css.  this is gtk3 css
+    #sed -i -e 's/@define-color /	--/g' $COLORCONFIG
+    #sed -i -e 's/ /: /g' $COLORCONFIG
+    #sed -e '1i:root {' -i $COLORCONFIG
+    #echo "}" >> $COLORCONFIG
+    killall waybar; waybar &
 }
 
 init
