@@ -29,6 +29,8 @@ function setwall () {
         hyprctl hyprpaper reload , $WALL
         printf "preload = $WALL\nwallpaper = , $WALL" > $HOME/.config/hypr/hyprpaper.conf
 	regen_waybar
+	rm $WALLDIR/hyprlock-bg
+	ln -s $WALL $WALLDIR/hyprlock-bg
     elif [[ $WM == "x11" ]]; then
         nitrogen --set-zoom-fill --save $WALL
         $WALPGM -i $WALL
@@ -39,16 +41,20 @@ function setwall () {
 
 function regen_waybar () {
     COLORWAYBAR="$HOME/.config/waybar/colors-waybar.css"
-    COLORWOFI="$HOME/.config/wofi/colors-wofi.css"
     $WALPGM -i $WALL
     cp $HOME/.cache/wal/colors-waybar.css $COLORWAYBAR
-    cp $HOME/.cache/wal/colors-waybar.css $COLORWOFI
-    ## the following commands would apply if we were dealing with regular css.  this is gtk3 css
-    #sed -i -e 's/@define-color /	--/g' $COLORCONFIG
-    #sed -i -e 's/ /: /g' $COLORCONFIG
-    #sed -e '1i:root {' -i $COLORCONFIG
-    #echo "}" >> $COLORCONFIG
     killall waybar; waybar &
+    theme_wofi
+}
+
+function theme_wofi() {
+    BASEWOFI="$HOME/.config/wofi/style-base.css"
+    COLORWOFI="$HOME/.config/wofi/colors-wofi.css"
+    STYLEWOFI="$HOME/.config/wofi/style.css"
+    cp $HOME/.cache/wal/colors-waybar.css $COLORWOFI
+    rm $STYLEWOFI
+    cat $COLORWOFI >> $STYLEWOFI
+    cat $BASEWOFI >> $STYLEWOFI
 }
 
 init
