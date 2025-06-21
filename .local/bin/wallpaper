@@ -2,6 +2,7 @@
 
 function init () {
     WALLDIR="$HOME/Pictures"
+    BASEWALLDIR=$WALLDIR
     XRES="$HOME/.cache/wal/colors.Xresources"
     WALPGM="$HOME/.local/pip-pkgs/bin/wal"
     WM=$XDG_SESSION_TYPE
@@ -52,7 +53,6 @@ function regen_waybar () {
 }
 
 function theme_wofi() {
-    BASEWALLDIR=$WALLDIR
     BASEWOFI="$HOME/.config/wofi/style-base.css"
     COLORWOFI="$HOME/.config/wofi/colors-wofi.css"
     STYLEWOFI="$HOME/.config/wofi/style.css"
