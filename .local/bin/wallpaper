@@ -28,13 +28,17 @@ function setwall () {
     if [[ $WM == "wayland" ]]; then
         hyprctl hyprpaper reload , $WALL
         printf "preload = $WALL\nwallpaper = , $WALL" > $HOME/.config/hypr/hyprpaper.conf
-	regen_waybar
-	rm $WALLDIR/hyprlock-bg
-	ln -s $WALL $WALLDIR/hyprlock-bg
+	    regen_waybar
+	    rm $BASEWALLDIR/hyprlock-bg
+	    ln -s $WALL $BASEWALLDIR/hyprlock-bg
     elif [[ $WM == "x11" ]]; then
-        nitrogen --set-zoom-fill --save $WALL
+        nitrogen --set-zoom-fill --save $WALL --head=0
+        nitrogen --set-zoom-fill --save $WALL --head=1
+        nitrogen --set-zoom-fill --save $WALL --head=2
         $WALPGM -i $WALL
         xrdb $XRES
+        rm $BASEWALLDIR/i3lock-bg
+        ln -s $WALL $BASEWALLDIR/i3lock-bg
         echo 'awesome.restart()' | awesome-client
     fi
 }
@@ -48,6 +52,7 @@ function regen_waybar () {
 }
 
 function theme_wofi() {
+    BASEWALLDIR=$WALLDIR
     BASEWOFI="$HOME/.config/wofi/style-base.css"
     COLORWOFI="$HOME/.config/wofi/colors-wofi.css"
     STYLEWOFI="$HOME/.config/wofi/style.css"
@@ -60,3 +65,4 @@ function theme_wofi() {
 init
 getwall
 setwall
+touch testfile
