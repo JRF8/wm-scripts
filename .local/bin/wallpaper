@@ -37,7 +37,11 @@ function setwall () {
         nitrogen --set-zoom-fill --save $WALL --head=1
         nitrogen --set-zoom-fill --save $WALL --head=2
         $WALPGM -i $WALL
-        xrdb $XRES
+        ## xrdb $XRES
+        ## xrdb ~/.Xresources
+        cat $XRES > ~/.Xresources
+        cat ~/.dpi.Xresources >> ~/.Xresources
+        xrdb ~/.Xresources
         rm $BASEWALLDIR/i3lock-bg
         ln -s $WALL $BASEWALLDIR/i3lock-bg
         echo 'awesome.restart()' | awesome-client
@@ -65,4 +69,3 @@ function theme_wofi() {
 init
 getwall
 setwall
-touch testfile
