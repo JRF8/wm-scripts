@@ -5,4 +5,6 @@ RES=$(ls $RESDIR | rofi -dmenu)
 
 $RESDIR/$RES
 
-nitrogen --restore
+nitrogen --restore --head=0
+nitrogen --restore --head=1
+nitrogen --restore --head=2
