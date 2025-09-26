@@ -1,4 +1,4 @@
-#!/bin/bash
+#/usr/bin/env bash
 
 RESDIR="$HOME/.screenlayout/"
 RES=$(ls $RESDIR | rofi -dmenu)
